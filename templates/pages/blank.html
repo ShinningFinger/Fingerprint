@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Details</title>
+    <script src="../../static/js/client.min.js"></script>
+    <script src="../../static/js/fingerprint2.js"></script>
+    <script src="../../static/js/jquery.min.js"></script>
+    <script src="../../static/js/FontDetection.js"></script>
+    <script src="../../static/js/FP_Xavier.js"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jstimezonedetect/1.0.4/jstz.min.js'></script>
+    <script src="../../static/js/ip-address/dist/ip-address-globals.js"></script>
+
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <!-- Material Icons-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- MetisMenu CSS -->
+    <link href="../../static/startbootstrap-sb-admin-2/vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="../../static/startbootstrap-sb-admin-2/dist/css/sb-admin-2.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="../../static/startbootstrap-sb-admin-2/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+<script>
+    function fingerPrint () {
+        var bar             = '|';
+        var FP =[];
+        var headerList      = document.getElementById('headerList').innerText;
+        var acceptType      = document.getElementById('AcceptType').innerText;
+        var acceptEncoding  = document.getElementById('AcceptEncoding').innerText;
+        var acceptLanguage  = document.getElementById('AcceptLanguage').innerText;
+        var DNT             = document.getElementById('DNT').innerText;
+        FP.push(document.getElementById('UA_Request').innerText);
+        FP.push(acceptType);
+        FP.push(acceptEncoding);
+        FP.push(acceptLanguage);
+        FP.push(DNT);
+        FP.push(currentResolution);
+        FP.push(pluginString);
+        FP.push(fonts);
+        FP.push(timeZone);
+        FP.push(colorDepth);
+        FP.push(isCookie);
+        FP.push(isJava);
+        FP.push(isFla);
+        FP.push(language);
+        FP.push(canvasPrint);
+        FP.push(isADB);
+        FP.push(isLocalStorage);
+        FP.push(isSessionStorage);
+        var key =FP.join(bar);
+        var seed = 256;
+        return murmurhash3_32_gc(key, seed);
+    }
+
+    function getIPs(callback){
+        var ip_dups = {};
+
+        //compatibility for firefox and chrome
+        var RTCPeerConnection = window.RTCPeerConnection
+            || window.mozRTCPeerConnection
+            || window.webkitRTCPeerConnection;
+        var useWebKit = !!window.webkitRTCPeerConnection;
+
+    //bypass naive webrtc blocking using an iframe
+    if(!RTCPeerConnection){
+        //NOTE: you need to have an iframe in the page right above the script tag
+        //
+        //<iframe id="iframe" sandbox="allow-same-origin" style="display: none"></iframe>
+        //<script>...getIPs called in here...
+        //
+        var win = iframe.contentWindow;
+        RTCPeerConnection = win.RTCPeerConnection
+            || win.mozRTCPeerConnection
+            || win.webkitRTCPeerConnection;
+        useWebKit = !!win.webkitRTCPeerConnection;
+    }
+
+    //minimal requirements for data connection
+    var mediaConstraints = {
+        optional: [{RtpDataChannels: true}]
+    };
+
+    var servers = {iceServers: [{urls: "stun:stun.services.mozilla.com"}]};
+
+    //construct a new RTCPeerConnection
+    var pc = new RTCPeerConnection(servers, mediaConstraints);
+
+    function handleCandidate(candidate){
+        //match just the IP address
+        var ip_regex = /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/
+        var ip_addr = ip_regex.exec(candidate)[1];
+
+        //remove duplicates
+        if(ip_dups[ip_addr] === undefined)
+            callback(ip_addr);
+
+        ip_dups[ip_addr] = true;
+    }
+
+    //listen for candidate events
+    pc.onicecandidate = function(ice){
+
+        //skip non-candidate events
+        if(ice.candidate)
+            handleCandidate(ice.candidate.candidate);
+    };
+
+    //create a bogus data channel
+    pc.createDataChannel("");
+
+    //create an offer sdp
+    pc.createOffer(function(result){
+
+        //trigger the stun server request
+        pc.setLocalDescription(result, function(){}, function(){});
+
+    }, function(){});
+
+    //wait for a while to let everything done
+    setTimeout(function(){
+        //read candidate info from local description
+        var lines = pc.localDescription.sdp.split('\n');
+
+        lines.forEach(function(line){
+            if(line.indexOf('a=candidate:') === 0)
+                handleCandidate(line);
+        });
+    }, 1000);
+}
+</script>
+
+<div id="wrapper">
+
+        <!-- Navigation -->
+        <nav id ="a" class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+             <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href={% url 'fp' %}>Browser FingerPrint</a>
+            </div>
+
+            <!-- /.navbar-header -->
+
+            <!-- /.navbar-top-links -->
+            <div class="nav navbar-top-links navbar-right">
+                <span class="navbar-brand">Email:{{ email }} </span>
+                <span class="navbar-brand">ID: {{id}}</span>
+            </div>
+
+            <div class="navbar-default sidebar" role="navigation">
+                <div class="sidebar-nav navbar-collapse">
+                    <ul class="nav" id="side-menu">
+                        <li class="sidebar-search">
+                            <div class="input-group custom-search-form">
+                                <input type="text" class="form-control" placeholder="Search...">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" type="button">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                </span>
+                            </div>
+                            <!-- /input-group -->
+                        </li>
+                        <li>
+                            <a href={% url 'fp' %}><i class="material-icons" style="vertical-align: middle">fingerprint</i>  <span style="vertical-align: middle">FingerPrint</span></a>
+                        </li>
+                        <li>
+                            <a href={% url 'table' %}><i class="material-icons" style="vertical-align: middle">history</i>  <span style="vertical-align: middle">History</span></a>
+                        </li>
+                        <li>
+                        <a href={% url 'statistics' %}><i class="material-icons" style="vertical-align: middle">assessment</i> <span style="vertical-align: middle">Statistics</span></a>
+                    </li>
+
+
+                    </ul>
+                </div>
+                <!-- /.sidebar-collapse -->
+            </div>
+            <!-- /.navbar-static-side -->
+        </nav>
+
+        <div id="page-wrapper">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">Here are some features of your browser!  </h1>
+                </div>
+                <!-- /.col-lg-12 -->
+
+                <div id="row">
+            <table class="table table-hover table-responsive">
+                <caption>Passive fingerprint</caption>
+                <thead>
+                <th>Name</th>
+                <th>Value</th>
+                </thead>
+                <tbody>
+                <!--Header Elements-->
+                <tr>
+                    <th>Elements in the reuqest header</th>
+                    <td id ="headerList">{{HeaderList}}</td>
+                </tr>
+
+
+                    <tr>
+                    <th>User-Agent in the Http Request</th>
+                    <td id ='UA_Request'>{{UserAgent}}</td>
+                </tr>
+
+{#                <tr>#}
+{#                    <th>META</th>#}
+{#                    <td id ="a">{{a}}</td>#}
+{#                </tr>#}
+
+
+                <!--Accept type-->
+                <tr>
+                    <th>Accept Type</th>
+                    <td id = 'AcceptType'>{{AcceptType}}</td>
+                </tr>
+
+                <!--Accept encoding-->
+                <tr>
+                    <th>Accept Encoding</th>
+                    <td id = 'AcceptEncoding'>{{AcceptEncoding}}</td>
+                </tr>
+
+                <!--Accept language-->
+                <tr>
+                    <th>Accept Language</th>
+                    <td id = 'AcceptLanguage'>{{AcceptLanguage}}</td>
+                </tr>
+
+                <!--DNT-->
+                <tr>
+                    <th>dnt</th>
+                    <td id = 'DNT'>{{dnt}}</td>
+                </tr>
+
+                <!--IP address-->
+                <tr>
+                    <th>IP address</th>
+                    <td id = 'IP'>{{IP}}</td>
+                </tr>
+                <!--locality-->
+
+                <tr>
+                    <th>Locality</th>
+                    <td id = 'locality'>UK</td>
+                </tr>
+                </tbody>
+            </table>
+
+            </div>
+            <div id="row">
+             <table class="table table-hover table-responsive">
+                <caption>Active fingerprint</caption>
+                <thead>
+                <th>Name</th>
+                <th>Value</th>
+                </thead>
+                <tbody>
+
+
+
+                   <!--UA obtained by JS-->
+                <tr>
+                    <th>User-Agent obtained by JS</th>
+                    <td><script>
+                        var UAS = navigator.userAgent; // Get User Agent String
+                        document.write(UAS)
+                    </script></td>
+                </tr>
+                 <!--UA in the header-->
+
+                <!--OS-->
+                <tr>
+                    <th>OS</th>
+                    <td>
+                        <script>
+                            var FP =new FP();
+                            var OS = FP.OSDetection();
+                            document.write(OS.out);
+                        </script>
+                    </td>
+                </tr>
+                <!--Real IP address-->
+                 <tr>
+                     <th>Real IP address</th>
+                     <td id='RealIP'>
+
+                         <iframe id="iframe" sandbox="allow-same-origin" style="display: none"></iframe>
+                         <script>
+                             var realIp = document.getElementById('ip');
+                             getIPs(function (ip) {
+                                var p = document.createElement("p");
+                                 p.innerHTML = ip;
+                                 //IPv6 addresses
+                                 if (ip.match(/^[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7}$/))
+                                     ;
+                                 //assume the rest are public IPs
+                                 else
+                                     document.getElementById("RealIP").appendChild(p);
+                             });
+
+                         </script>
+
+                     </td>
+
+                 </tr>
+                <!--OS version-->
+                <tr>
+                    <th>OS version</th>
+                    <td>
+                        <script>
+                            var OS = FP.OSDetection();
+                            var OSVersion = OS.version;
+                            document.write(OSVersion);
+                        </script>
+                    </td>
+                </tr>
+
+                <!--browser-->
+                <tr>
+                    <th>Browser</th>
+                    <td>
+                        <script>
+                            client = new ClientJS();
+                            var browser = client.getBrowser(); // Get User Language
+                            document.write(browser);
+                        </script>
+                    </td>
+                </tr>
+
+                <!--Browser version-->
+                <tr>
+                    <th>BrowserVersion</th>
+                    <td>
+                        <script>
+                            client = new ClientJS();
+                            var browserVersion = client.getBrowserVersion(); // Get User Language
+                            document.write(browserVersion);
+                        </script>
+                    </td>
+                </tr>
+
+
+                <!--platform-->
+                <tr>
+                    <th>Platform</th>
+                    <td>
+                        <script>
+{#                            client = new ClientJS();#}
+{#                            var browserVersion = client.getBrowserVersion(); // Get User Language#}
+                            var platform = navigator.platform;
+                            document.write(platform);
+                        </script>
+                    </td>
+                </tr>
+
+
+                <!--Screen resolution-->
+                <tr>
+                    <th>Screen Resolution</th>
+                    <td><script>
+                        if(FP.browserDetection().b === 'Firefox'){
+                            var ratio = FP.detectZoom();
+                            height = Math.round(screen.height*ratio);
+                            width = Math.round(screen.width*ratio);
+                            var currentResolution = height + "*" + width;
+                        }
+                        else {
+                            currentResolution = screen.height+"*"+screen.width;} // Get Current Resolution
+                        document.write(currentResolution);</script></td>
+                </tr>
+
+                {# this is a new feature#}
+                <!--Available view area-->
+                <tr>
+                    <th>Available view area </th>
+                    <td><script>
+                        var availableViewArea = screen.availHeight+"*"+screen.availWidth; // Get available Resolution
+                        document.write(availableViewArea);</script></td>
+                </tr>
+
+                {# this is a new feature#}
+                <!--Zoom ratio-->
+                <tr>
+                    <th> Zoom Ratio </th>
+                    <td><script>
+                        var ZoomRatio = FP.detectZoom();
+                        document.write(ZoomRatio);</script></td>
+                </tr>
+
+                {# this is a new feature#}
+                <!-- Aspect Ratio-->
+                <tr>
+                    <th> Aspect Ratio </th>
+                    <td><script>
+                        var AspectRatio = screen.width/screen.height;
+                        document.write(AspectRatio);</script></td>
+                </tr>
+
+                <!-- Plugins -->
+                <tr>
+                    <th>Plugins</th>
+                    <td><script>
+                        var client = new ClientJS();
+                        var pluginString = client.getPlugins();
+                        document.write(pluginString);
+                        //var client = new ClientJS(); // Create A New Client Object
+                        //var plugins = client.getPlugins();
+                        //document.write(plugins)</script></td>
+                </tr>
+
+                <!--Font-->
+                <tr>
+                    <th>Font</th>
+                    <td><script>
+                        var fonts = FP.getFont(); // Get Fonts
+                        document.write(fonts);</script></td>
+                </tr>
+
+                <!--TimeZone-->
+                <tr>
+                    <th>TimeZone</th>
+
+                    <td><script>
+
+                        var timeZone = jstz.determine().name();
+                        document.write(timeZone);</script></td>
+                </tr>
+
+                <!--Flash-->
+                <tr>
+                    <th>Flash</th>
+                    <td>
+                        <script>
+                            var fls = FP.isFlash();
+                            var isFla;
+                            if (fls.f)// Create A New Client Object
+                            { isFla= 1;}
+                            else {isFla =0;}
+                            document.write(isFla);
+                        </script>
+                    </td>
+                </tr>
+
+                <!--Flash version-->
+                <tr>
+                    <th>Flash Version</th>
+
+                    <td><script>
+                        var fls = FP.isFlash();
+                        var flashVersion = fls.v;
+                        document.write(flashVersion);</script></td>
+                </tr>
+
+                <!--Color Depth-->
+                <tr>
+                    <th>Color depth</th>
+                    <td>
+                        <script>
+                            var colorDepth = screen.colorDepth; // Get Color Depth
+                            document.write(colorDepth)
+                        </script>
+                    </td>
+                </tr>
+
+                <!--Cookies Enabled-->
+                <tr>
+                    <th>Cookies Enabled</th>
+                    <td>
+                        <script>
+                            // var client = new ClientJS(); // Create A New Client Object
+                            var isCookie;
+                            if (navigator.cookieEnabled)
+                            { isCookie = 1;}
+                            else
+                            { isCookie = 0; }// Get Color Depth
+                            document.write(isCookie)
+                        </script>
+                    </td>
+                </tr>
+
+                <!--Language-->
+                <tr>
+                    <th>Language</th>
+                    <td>
+                        <script>
+                            //var client = new ClientJS(); // Create A New Client Object
+                            var language = navigator.language; // Get User Language
+                            document.write(language)
+                        </script>
+                    </td>
+                </tr>
+
+
+                <!--Canvas-->
+                <tr>
+                    <th>Canvas</th>
+                    <td>
+                        <script>
+                            var client = new ClientJS(); // Create A New Client Object
+                            var canvasPrint = client.getCanvasPrint(); // Get Canvas Print
+                            document.write('<img src="'+canvasPrint+'">');
+                        </script>
+                    </td>
+                </tr>
+
+                <!--AdBlock-->
+                <tr>
+                    <th>AdBlock</th>
+                    <td>
+                        <script src="/static/js/ads.js" type="text/javascript"></script>
+                        <script>
+                            var isADB;
+                            var isAdEnabled = isAdEnabled || !1;
+                            if( !isAdEnabled ){
+                                //Ads.js not loaded
+                                // AdBlock detected
+                                isADB = 1;
+                            }
+                            else isADB=0;
+                            document.write(isADB);
+                        </script>
+                    </td>
+                </tr>
+
+                <!--Java enabled-->
+                <tr>
+                    <th>Java Enabled</th>
+                    <td>
+                        <script>
+                            var client = new ClientJS(); // Create A New Client Object
+                            var isJava ;
+                            if(client.isJava()){
+                                isJava=1;
+                            }
+                            else isJava=0;
+                            document.write(isJava);
+
+                        </script>
+                    </td>
+                </tr>
+                <!--Local storage-->
+                <tr>
+                    <th>Local storage</th>
+                    <td>
+                        <script>
+                            var client = new ClientJS(); // Create A New Client Object
+                            var isLocalStorage;
+                            if(client.isLocalStorage())
+                                isLocalStorage=1;
+                            else
+                                isLocalStorage=0;
+                            document.write(isLocalStorage);
+                        </script>
+                    </td>
+                </tr>
+
+                <!--Session storage-->
+                <tr>
+                    <th>Session storage</th>
+                    <td>
+                        <script>
+                            var client = new ClientJS(); // Create A New Client Object
+                            var isSessionStorage ;
+                            if(client.isSessionStorage())
+                                isSessionStorage=1;
+                            else
+                                isSessionStorage=0;
+                            document.write(isSessionStorage);
+                        </script>
+                    </td>
+                </tr>
+
+{#                <!--Touch point-->#}
+{#                <tr>#}
+{#                    <th>Touch Point</th>#}
+{#                    <td>#}
+{#                        <script>#}
+{#                            var touch = FP.getTouchSupport();#}
+{#                            document.write(touch);#}
+{#                        </script>#}
+{#                    </td>#}
+{#                </tr>#}
+                <!--Geolocation-->
+                <tr>
+                    <th>Geolocaiton</th>
+                    <td id="geo">
+                        <script>
+                            if (navigator.geolocation) {
+                                navigator.geolocation.getCurrentPosition(showPosition,showError,geo_options);
+                            } else {
+                                document.write( "Geolocation is not supported by this browser.");
+                            }
+                            var geo = document.getElementById("geo");
+
+                            function showPosition(position) {
+                                var latlon = position.coords.latitude + "," + position.coords.longitude;
+{#                                var json = 'https://maps.googleapis.com/maps/api/geocode/json?latlng='+latlon+'&key=AIzaSyA6Z3fSGU6jwNHAX2SXY3C8SQNW9h2v1Us'#}
+                                var img_url = "https://maps.googleapis.com/maps/api/staticmap?center="+latlon+"&zoom=14&size=400x300&sensor=false&key= AIzaSyA6Z3fSGU6jwNHAX2SXY3C8SQNW9h2v1Us ";
+                                geo.innerHTML = "<img src="+img_url+">";
+{#                                geo.innerHTML =json.results;#}
+                            }
+
+                            function showError(error) {
+                                switch(error.code) {
+                                    case error.PERMISSION_DENIED:
+                                        alert( "User denied the request for Geolocation.");
+                                        break;
+                                    case error.POSITION_UNAVAILABLE:
+                                        alert("Location information is unavailable.");
+                                        break;
+                                    case error.TIMEOUT:
+                                        alert( "The request to get user location timed out.");
+                                        break;
+                                    case error.UNKNOWN_ERROR:
+                                        alert( "An unknown error occurred.");
+                                        break;
+                                }
+                            }
+
+                            var geo_options = {
+                                enableHighAccuracy: true,
+                                maximumAge        : 30000,
+                                timeout           : 27000
+                            };
+                        </script>
+                    <td>
+                </tr>
+                <!--FP-->
+                <tr>
+                    <th>FingerPrint</th>
+                    <td>
+                        <script>
+                            var fpString = fingerPrint();
+                            document.write(fpString);
+                        </script>
+                    </td>
+                </tr>
+      </tbody>
+            </table>
+
+            </div>
+            </div>
+            <!-- /.row -->
+
+            <!-- /#page-wrapper -->
+
+        </div>
+
+    </div>
+
+<script>
+
+    $(document).ready(function(){
+
+        $.ajaxSetup({
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}' }
+        });
+
+        var post_data = {
+            "UserAgent" : UAS,
+            "OS" : OS.out,
+            "OS_Version" : OSVersion,
+            "Browser" : browser,
+            "Browser_Version" : browserVersion,
+            "Screen_Resolution" : currentResolution,
+            "Plugins" : pluginString,
+            "Font" : fonts,
+            "TimeZone" : timeZone,
+            "Flash" : isFla,
+            "Flash_Version" : flashVersion,
+            "Color_Depth" :colorDepth,
+            "CookiesEnabled" :isCookie,
+            "language" : language,
+            "Canvas" : canvasPrint,
+            "AspectRatio": AspectRatio,
+            "ZoomRatio" :ZoomRatio,
+            "AvailableViewArea" :availableViewArea,
+            "AdBlock":isADB,
+            "isJava":isJava,
+            "isLocalStorage":isLocalStorage,
+            "isSessionStorage":isSessionStorage,
+            "FingerPrint" : fpString
+        };
+        $.ajax({
+            url: {% url 'scene_update_view' %},
+            type: "POST",
+            data: post_data,
+            success:function (res) {
+            }
+        });
+
+    });
+
+
+</script>
+
+<!-- /#wrapper -->
+
+<!-- jQuery -->
+<script src="../../static/startbootstrap-sb-admin-2/vendor/jquery/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="../../static/startbootstrap-sb-admin-2/vendor/bootstrap/js/bootstrap.min.js"></script>
+
+<!-- Metis Menu Plugin JavaScript -->
+<script src="../../static/startbootstrap-sb-admin-2/vendor/metisMenu/metisMenu.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="../../static/startbootstrap-sb-admin-2/dist/js/sb-admin-2.js"></script>
+
+
+</body>
+
+</html>

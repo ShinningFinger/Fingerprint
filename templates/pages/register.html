@@ -1,0 +1,105 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Register</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="/static/js/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+
+    <!-- MetisMenu CSS -->
+    <link href="../../static/startbootstrap-sb-admin-2/vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="../../static/startbootstrap-sb-admin-2/dist/css/sb-admin-2.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="../../static/startbootstrap-sb-admin-2/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+
+
+
+
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 col-md-offset-4">
+                <div class="login-panel panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Sign Up</h3>
+                    </div>
+                    <div class="panel-body">
+                        <p>Write down your email address and we will assign a unique ID for you.</p>
+                        <form role="form" id="emailForm">
+                            <fieldset>
+
+                                <div class="form-group">
+                                    <input id='email' class="form-control" placeholder="E-mail" name="email" type="email" autofocus>
+                                </div>
+                            </fieldset>
+                            <input id="signUp" type="button" value='Sign Up' class="btn btn-lg btn-success btn-block" onclick='ajaxSubmit()'>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function ajaxSubmit() {
+        var email=document.getElementById('email').value;
+        $.ajaxSetup({
+                data: {csrfmiddlewaretoken: '{{ csrf_token }}' }
+            });
+        $.ajax({
+            url:{% url 'register_update_view' %},
+            data:{'Email':email},
+            type:'POST',
+            success:function (res) {
+                var o =jQuery.parseJSON(res);
+                if (confirm('Your ID is :'+o.UID+'\n'+'Your email address is :'+o.email))
+                {
+                    window.location.href ="fingerprint"
+                }
+            }
+            }
+        );
+        }
+    </script>
+
+    <!-- jQuery -->
+    <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="/static/js/bootstrap/dist/js/bootstrap.min.js"></script>
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="../../static/startbootstrap-sb-admin-2/vendor/metisMenu/metisMenu.min.js"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="../../static/startbootstrap-sb-admin-2/dist/js/sb-admin-2.js"></script>
+
+</body>
+
+</html>

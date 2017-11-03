@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html >
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>Browser features</title>
+
+      <script src="../static/js/client.min.js"></script>
+      <script src="../static/js/fingerprint2.js"></script>
+      <script src="../static/js/jquery.min.js"></script>
+      <script src="../static/js/FontDetection.js"></script>
+      <script src="../static/js/FP_Xavier.js"></script>
+
+      <link rel="icon" type="image/ico"/>
+      <!-- Bootstrap -->
+      <link href="/static/js/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+      <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+      <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+      <!--[if lt IE 9]>
+      <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+  <script>
+       function fingerPrint () {
+            var bar             = '|';
+            var FP =[];
+
+           var headerList      = document.getElementById('headerList').innerText;
+           var acceptType      = document.getElementById('AcceptType').innerText;
+           var acceptEncoding  = document.getElementById('AcceptEncoding').innerText;
+           var acceptLanguage  = document.getElementById('AcceptLanguage').innerText;
+           var DNT             = document.getElementById('DNT').innerText;
+           FP.push(document.getElementById('UA_Request').innerText);
+           FP.push(headerList);
+           FP.push(acceptType);
+           FP.push(acceptEncoding);
+           FP.push(acceptLanguage);
+           FP.push(DNT);
+           FP.push(currentResolution);
+           FP.push(pluginString);
+           FP.push(fonts);
+           FP.push(timeZone);
+           FP.push(colorDepth);
+           FP.push(isCookie);
+           FP.push(language);
+           FP.push(canvasPrint);
+           var key =FP.join(bar);
+
+           var seed = 256;
+           return murmurhash3_32_gc(key, seed);
+       }
+  </script>
+  <h1>Here are some features of your browser! {{ DID }}</h1>
+  <br>
+
+  <table class="table table-hover">
+      <caption>Information</caption>
+
+      <tbody>
+      <!--Header Elements-->
+      <tr>
+          <th>Elements in the reuqest header</th>
+          <td id ="headerList">{{HeaderList}}</td>
+      </tr>
+
+      <!--UA in the header-->
+      <tr>
+          <th>User-Agent in the Http Request</th>
+          <td id ='UA_Request'>{{UserAgent}}</td>
+      </tr>
+
+      <!--UA obtained by JS-->
+      <tr>
+          <th>User-Agent obtained by JS</th>
+          <td><script>
+              var client =new ClientJS();
+
+              var UAS = navigator.userAgent; // Get User Agent String
+              document.write(UAS)
+          </script></td>
+      </tr>
+
+      <!--Accept type-->
+      <tr>
+          <th>Accept Type</th>
+          <td id = 'AcceptType'>{{AcceptType}}</td>
+      </tr>
+
+      <!--Accept encoding-->
+      <tr>
+          <th>Accept Encoding</th>
+          <td id = 'AcceptEncoding'>{{AcceptEncoding}}</td>
+      </tr>
+
+      <!--Accept language-->
+      <tr>
+          <th>Accept Language</th>
+          <td id = 'AcceptLanguage'>{{AcceptLanguage}}</td>
+      </tr>
+
+      <!--DNT-->
+      <tr>
+          <th>dnt</th>
+          <td id = 'DNT'>{{dnt}}</td>
+      </tr>
+
+      <!--IP address-->
+      <tr>
+          <th>IP address</th>
+          <td id = 'IP'>{{IP}}</td>
+      </tr>
+
+      <!--OS-->
+      <tr>
+          <th>OS</th>
+          <td>
+              <script>
+                  var FP =new FP();
+                  var OS = FP.OSDetection();
+                  document.write(OS.out);
+              </script>
+          </td>
+      </tr>
+
+      <!--OS version-->
+      <tr>
+          <th>OS version</th>
+          <td>
+              <script>
+                  var OS = FP.OSDetection();
+                  var OSVersion = OS.version;
+                  document.write(OSVersion);
+              </script>
+          </td>
+      </tr>
+
+      <!--browser-->
+      <tr>
+          <th>Browser</th>
+          <td>
+              <script>
+                  var client = new ClientJS();
+                  var browser = client.getBrowser(); // Get User Language
+                  document.write(browser);
+              </script>
+          </td>
+      </tr>
+
+      <!--Browser version-->
+      <tr>
+          <th>BrowserVersion</th>
+          <td>
+              <script>
+                  var client = new ClientJS();
+                  var browserVersion = client.getBrowserVersion(); // Get User Language
+                  document.write(browserVersion);
+              </script>
+          </td>
+        </tr>
+
+        <!--Screen resolution-->
+        <tr>
+            <th>Screen Resolution</th>
+            <td><script>
+                if(FP.browserDetection().b === 'Firefox'){
+                    var ratio = FP.detectZoom();
+                    height = Math.round(screen.height*ratio);
+                    width = Math.round(screen.width*ratio);
+                    var currentResolution = height + "*" + width;
+                }
+                else {
+                     currentResolution = screen.height+"*"+screen.width;} // Get Current Resolution
+                document.write(currentResolution);</script></td>
+        </tr>
+
+        {# this is a new feature#}
+        <!--Available view area-->
+        <tr>
+            <th>Available view area </th>
+            <td><script>
+                var availableViewArea = screen.availHeight+"*"+screen.availWidth; // Get available Resolution
+                document.write(availableViewArea);</script></td>
+        </tr>
+
+        {# this is a new feature#}
+        <!--Zoom ratio-->
+        <tr>
+            <th> Zoom Ratio </th>
+            <td><script>
+                var ZoomRatio = FP.detectZoom();
+                document.write(ZoomRatio);</script></td>
+        </tr>
+
+        {# this is a new feature#}
+        <!-- Aspect Ratio-->
+        <tr>
+            <th> Aspect Ratio </th>
+            <td><script>
+                var AspectRatio = screen.width/screen.height;
+                document.write(AspectRatio);</script></td>
+        </tr>
+
+        <!-- Plugins -->
+        <tr>
+            <th>Plugins</th>
+            <td><script>
+                var pluginString = FP.getPlugins();
+                document.write(pluginString);
+                //var client = new ClientJS(); // Create A New Client Object
+                //var plugins = client.getPlugins();
+                //document.write(plugins)</script></td>
+        </tr>
+
+        <!--Font-->
+        <tr>
+            <th>Font</th>
+            <td><script>
+                var fonts = FP.getFont(); // Get Fonts
+                document.write(fonts);</script></td>
+        </tr>
+
+        <!--TimeZone-->
+        <tr>
+            <th>TimeZone</th>
+
+            <td><script>
+                var timeZone = FP.getTimezone();
+                document.write(timeZone);</script></td>
+        </tr>
+
+        <!--Flash-->
+        <tr>
+            <th>Flash</th>
+            <td>
+                <script>
+                    var fls = FP.isFlash();
+                    var isFla;
+                    if (fls.f)// Create A New Client Object
+                    { isFla= 1;}
+                    else {isFla =0;}
+                    document.write(isFla);
+                    if(isfla=1){
+                        new FingerPrint2()
+                    }
+                </script>
+            </td>
+        </tr>
+
+        <!--Flash version-->
+        <tr>
+            <th>Flash Version</th>
+
+            <td><script>
+                var fls = FP.isFlash();
+                var flashVersion = fls.v;
+                document.write(flashVersion);</script></td>
+        </tr>
+
+        <!--Color Depth-->
+        <tr>
+            <th>Color depth</th>
+            <td>
+                <script>
+                    var colorDepth = screen.colorDepth; // Get Color Depth
+                    document.write(colorDepth)
+                </script>
+            </td>
+        </tr>
+
+        <!--Cookies Enabled-->
+        <tr>
+            <th>Cookies Enabled</th>
+            <td>
+                <script>
+                    // var client = new ClientJS(); // Create A New Client Object
+                    var isCookie;
+                    if (navigator.cookieEnabled)
+                    { isCookie = 1;}
+                    else
+                    { isCookie = 0; }// Get Color Depth
+                    document.write(isCookie)
+                </script>
+            </td>
+        </tr>
+
+        <!--Language-->
+        <tr>
+            <th>Language</th>
+            <td>
+                <script>
+                    //var client = new ClientJS(); // Create A New Client Object
+	                var language = navigator.language; // Get User Language
+                    document.write(language)
+                </script>
+            </td>
+        </tr>
+
+        <!--Canvas-->
+        <tr>
+            <th>Canvas</th>
+            <td>
+                <script>
+                    var client = new ClientJS(); // Create A New Client Object
+                    var canvasPrint = client.getCanvasPrint(); // Get Canvas Print
+                    document.write('<img src="'+canvasPrint+'">');
+                </script>
+            </td>
+        </tr>
+
+        <!--FP-->
+        <tr>
+            <th>FingerPrint</th>
+            <td>
+                <script>
+                    var a= FP.getTouchSupport();
+                    document.write(a);
+                </script>
+            </td>
+        </tr>
+
+        </tbody>
+    </table>
+
+
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="/static/js/bootstrap/dist/js/bootstrap.min.js"></script>
+
+
+  </body>
+</html>

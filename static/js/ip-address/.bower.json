@@ -1,0 +1,37 @@
+{
+  "name": "ip-address",
+  "description": "A library for parsing IPv6 and IPv4 IP addresses in node and the browser.",
+  "main": "dist/ip-address-globals.js",
+  "authors": [
+    "Beau Gunderson <beau@beaugunderson.com> (https://beaugunderson.com/)"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "ipv6",
+    "ipv4",
+    "browser",
+    "validation"
+  ],
+  "homepage": "https://github.com/beaugunderson/ip-address",
+  "moduleType": [
+    "globals"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "version": "5.8.8",
+  "_release": "5.8.8",
+  "_resolution": {
+    "type": "version",
+    "tag": "v5.8.8",
+    "commit": "f6f3a9cde398d824f8df0516d3b71f9f3865cf9b"
+  },
+  "_source": "https://github.com/beaugunderson/ip-address.git",
+  "_target": "^5.8.8",
+  "_originalSource": "ip-address",
+  "_direct": true
+}
